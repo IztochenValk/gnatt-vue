@@ -3,15 +3,17 @@
         <div className="flex-1">
             <a className="btn btn-ghost text-xl">daisyUI</a>
         </div>
-        <div className="flex-1">
-            <a className="btn btn-ghost text-md">
-              <RouterLink
-                    :to="{ name: 'editor' }"
+
+            <div className="flex-1">
+                <RouterLink
+                    :to="{ name: 'projects' }"
                 >
-                    Editor
-                </RouterLink>
-            </a>
-        </div>
+                <a className="btn btn-ghost text-md">
+                    projects
+                </a>
+            </RouterLink>
+            </div>
+
         <div className="flex-none" v-if="auth.isAuthenticated">
             <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">

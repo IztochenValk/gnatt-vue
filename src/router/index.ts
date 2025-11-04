@@ -1,15 +1,11 @@
-// src/router/index.ts
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
 
 const routes: RouteRecordRaw[] = [
-  { path: '/', name: 'app-home', component: () => import('@/views/AppHomeView.vue'), meta: { requiresAuth: true } },
-  { path: '/login', name: 'login', component: () => import('@/views/LoginView.vue'), meta: { guestOnly: true } },
-
-  // Route unique: liste ou éditeur selon la présence de :id
-  { path: '/editor/:id?', name: 'editor', component: () => import('@/views/GanttListView.vue') },
-
-  { path: '/:pathMatch(.*)*', redirect: '/' }
+  { path: '/', redirect: '/projects' },
+  { path: '/projects', name: 'projects', component: () => import('@/views/ProjectsView.vue') },
+  { path: '/projects/:id', name: 'gantt-editor', component: () => import('@/views/GanttEditorView.vue'), props: true },
+  { path: '/:pathMatch(.*)*', redirect: '/projects' }
 ]
 
 const router = createRouter({
@@ -17,11 +13,11 @@ const router = createRouter({
   routes
 })
 
+// Garde très simple pour notre faux auth
 router.beforeEach((to) => {
   const auth = useAuthStore()
-  if (to.meta.guestOnly === true && auth.isAuthenticated) {
-    return { name: 'app-home' }
-  }
+  // On ne bloque rien pour l’instant, mais on garde le hook prêt
+  // if (!auth.isAuthenticated && to.name !== 'projects') return { name: 'projects' }
   return true
 })
 

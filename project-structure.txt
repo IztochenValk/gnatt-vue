@@ -38,7 +38,7 @@
       📁 shared
         📄 EmptyState.vue
         📄 PlusCircleButton.vue
-        📄 ProjectCard.vue
+        📄 ProjectItem.vue
       📁 stores
   📄 main.js
   📁 router

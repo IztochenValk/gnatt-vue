@@ -44,6 +44,7 @@
           :key="p.id"
           :project="p"
           @click="openProject(p.id)"
+          :class="projectItemClass"
         />
       </ul>
     </div>
@@ -63,7 +64,7 @@ const router = useRouter()
 const projects = useProjects()
 const items = computed(() => projects.all)  // ← toujours un tableau
 const formVisible = ref(false)
-
+const projectItemClass = ref('project-item');
 function openForm() { formVisible.value = true }
 function cancelForm() { formVisible.value = false }
 
@@ -73,15 +74,19 @@ function handleCreate(payload: { name: string; start?: string; end?: string }) {
   if (payload.start && payload.end) projects.updateHorizon(p.id, payload.start, payload.end)
   formVisible.value = false
   // Navigue vers l’éditeur du projet
-  router.push({ name: 'editor', params: { id: p.id } })
+  router.push({ name: 'projects', params: { id: p.id } })
 }
 
 function openProject(id: string) {
-  router.push({ name: 'editor', params: { id } })
+  router.push({ name: 'projects', params: { id } })
 }
 </script>
 
 <style scoped>
 .fade-enter-active, .fade-leave-active { transition: opacity .15s ease }
 .fade-enter-from, .fade-leave-to { opacity: 0 }
+.project-item:hover{
+  cursor: pointer;
+  filter: brightness(0.92)
+}
 </style>
