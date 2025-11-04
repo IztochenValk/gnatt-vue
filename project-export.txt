@@ -1,3 +1,109 @@
+
+===== ./collect_gantt_files.sh =====
+#!/usr/bin/env bash
+set -e
+
+# Nom du fichier de sortie
+OUTPUT="project-export.txt"
+
+# Extensions qu'on veut inclure
+INCLUDE_EXTENSIONS="java,kt,xml,yml,yaml,json,js,jsx,ts,tsx,css,scss,html,md,gradle,sh, vue"
+
+# Répertoires à exclure
+EXCLUDES="node_modules|.git|target|build|dist|out|venv|__pycache__|.idea|.vscode"
+
+echo "▶ Export du projet vers $OUTPUT"
+echo "▶ Extensions incluses: $INCLUDE_EXTENSIONS"
+echo "▶ Exclusions: $EXCLUDES"
+echo "" > "$OUTPUT"
+
+# Trouver les fichiers et concaténer
+find . -type f \
+  | grep -E "\.($(echo $INCLUDE_EXTENSIONS | sed 's/,/|/g'))$" \
+  | grep -Ev "$EXCLUDES" \
+  | while read -r file; do
+      echo "===== $file =====" >> "$OUTPUT"
+      cat "$file" >> "$OUTPUT"
+      echo -e "\n\n" >> "$OUTPUT"
+    done
+
+echo "✔ Export terminé → $OUTPUT"
+
+
+
+===== ./go-on.sh =====
+set -euo pipefail
+
+# Helpers
+mkf() { # mkf <path> <heredoc_content>
+  local f="$1"
+  if [ -e "$f" ]; then
+    echo "⟶ Skip (existe déjà): $f"
+  else
+    mkdir -p "$(dirname "$f")"
+    cat > "$f" <<'EOF'
+<template>
+  <div></div>
+</template>
+
+<script setup lang="ts">
+// TODO
+</script>
+
+<style scoped>
+/* TODO */
+</style>
+EOF
+    echo "✓ Créé: $f"
+  fi
+}
+
+# 1) Views
+mkf "src/views/GanttListView.vue" ""
+mkf "src/views/GanttEditorView.vue" ""
+
+# 2) Features: editor
+mkf "src/features/gantt/editor/EditorShell.vue" ""
+mkf "src/features/gantt/editor/Toolbar.vue" ""
+mkf "src/features/gantt/editor/Sidebar.vue" ""
+mkf "src/features/gantt/editor/TimeHorizonPicker.vue" ""
+
+# 3) Features: canvas
+mkf "src/features/gantt/canvas/GanttCanvas.vue" ""
+
+# 4) Layers
+mkf "src/features/gantt/canvas/layers/GridLayer.vue" ""
+mkf "src/features/gantt/canvas/layers/BarsLayer.vue" ""
+mkf "src/features/gantt/canvas/layers/LinksLayer.vue" ""
+mkf "src/features/gantt/canvas/layers/TodayMarker.vue" ""
+
+# 5) Shared
+mkf "src/features/gantt/shared/EmptyState.vue" ""
+mkf "src/features/gantt/shared/PlusCircleButton.vue" ""
+mkf "src/features/gantt/shared/ProjectCard.vue" ""
+
+echo "Terminé."
+
+
+
+===== ./index.html =====
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>projet-vue-jeu</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
+
+
+
+===== ./package-lock.json =====
 {
   "name": "projet-vue-jeu",
   "version": "0.0.0",
@@ -11,7 +117,6 @@
         "@tailwindcss/vite": "^4.1.16",
         "axios": "^1.13.1",
         "daisyui": "^5.3.10",
-        "lucide-vue-next": "^0.552.0",
         "pinia": "^3.0.3",
         "pinia-plugin-persistedstate": "^4.5.0",
         "tailwindcss": "^4.1.16",
@@ -1930,15 +2035,6 @@
         "url": "https://opencollective.com/parcel"
       }
     },
-    "node_modules/lucide-vue-next": {
-      "version": "0.552.0",
-      "resolved": "https://registry.npmjs.org/lucide-vue-next/-/lucide-vue-next-0.552.0.tgz",
-      "integrity": "sha512-xbP3UBwNkGoCl1ezW/zsGHtyJ1rOowPmSpUG1f7V38YvZBlGiV3BxL+4mu9C9i0EjfJ6ca066FpnB3VK+HN92g==",
-      "license": "ISC",
-      "peerDependencies": {
-        "vue": ">=3.0.1"
-      }
-    },
     "node_modules/magic-string": {
       "version": "0.30.21",
       "resolved": "https://registry.npmjs.org/magic-string/-/magic-string-0.30.21.tgz",
@@ -2338,3 +2434,799 @@
     }
   }
 }
+
+
+
+===== ./package.json =====
+{
+  "name": "projet-vue-jeu",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.16",
+    "axios": "^1.13.1",
+    "daisyui": "^5.3.10",
+    "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.5.0",
+    "tailwindcss": "^4.1.16",
+    "vue": "^3.5.22",
+    "vue-router": "^4.6.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.1",
+    "vite": "^7.1.7"
+  }
+}
+
+
+
+===== ./README.md =====
+# Vue 3 + Vite
+
+This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+
+Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+
+
+
+===== ./scan-project.sh =====
+#!/bin/bash
+
+# Nom du fichier de sortie
+OUTPUT_FILE="project-structure.txt"
+
+# Répertoire de départ (par défaut: répertoire courant)
+ROOT_DIR="${1:-.}"
+
+# Fonction récursive d'affichage de l'arborescence
+scan_dir() {
+  local current_dir="$1"
+  local prefix="$2"
+
+  # Liste triée des fichiers et dossiers (hors node_modules)
+  for entry in "$current_dir"/*; do
+    # Sauter node_modules et les fichiers cachés
+    if [[ "$entry" == *"node_modules"* || "$(basename "$entry")" == .* ]]; then
+      continue
+    fi
+
+    # Affichage
+    if [ -d "$entry" ]; then
+      echo "${prefix}📁 $(basename "$entry")" >> "$OUTPUT_FILE"
+      scan_dir "$entry" "$prefix  "
+    elif [ -f "$entry" ]; then
+      echo "${prefix}📄 $(basename "$entry")" >> "$OUTPUT_FILE"
+    fi
+  done
+}
+
+# Nettoyage du fichier existant
+echo "📦 Structure du projet à partir de $ROOT_DIR" > "$OUTPUT_FILE"
+echo "----------------------------------------" >> "$OUTPUT_FILE"
+
+# Lancer le scan
+scan_dir "$ROOT_DIR" ""
+
+echo "✅ Structure enregistrée dans $OUTPUT_FILE"
+
+
+
+===== ./src/main.js =====
+import { createApp } from 'vue';
+import { createPinia } from 'pinia';
+import { createPersistedState } from 'pinia-plugin-persistedstate'
+
+import './style.css';
+import App from './App.vue';
+
+// ⚠️ import après build de Pinia
+import { bindTokenGetter } from './services/http';
+import { useAuthStore } from './stores/auth.store';
+import  router from '@/router'
+
+const app = createApp(App);
+const pinia = createPinia();
+pinia.use(createPersistedState()) // <— important
+app.use(pinia);
+
+// Lie le getter de token à l’http axios
+const auth = useAuthStore(pinia);
+bindTokenGetter(() => auth.token);
+app.use(router)
+app.mount('#app');
+
+
+
+
+===== ./src/services/fake-auth.ts =====
+// src/services/fake-auth.ts
+export type Credentials = { email: string; password: string }
+export type FakeUser = { id: string; email: string; name: string; role?: 'viewer'|'editor'|'admin' }
+
+const DEMO_USER: FakeUser = {
+  id: 'u_1',
+  email: 'demo@demo.dev',
+  name: 'Demo User',
+  role: 'editor'
+}
+
+export async function fakeLogin({ email, password }: Credentials) {
+  await new Promise(r => setTimeout(r, 500)) // latence fictive
+  // Règle: accepte le couple ci-dessous. Sinon erreur 401.
+  if (email === 'demo@demo.dev' && password === 'demo123') {
+    return { token: 'dev-token-xyz', user: DEMO_USER }
+  }
+  const err = new Error('Invalid credentials')
+  // on met un code pour différencier si besoin
+  // @ts-expect-error
+  err.status = 401
+  throw err
+}
+
+export async function fakeMe(token?: string) {
+  await new Promise(r => setTimeout(r, 300))
+  if (token === 'dev-token-xyz') return DEMO_USER
+  const err = new Error('Unauthorized')
+  // @ts-expect-error
+  err.status = 401
+  throw err
+}
+
+
+
+===== ./src/services/http.ts =====
+// src/services/http.ts
+import axios, { AxiosError, AxiosRequestConfig, Method } from 'axios';
+
+export type HttpMethod = 'GET'|'POST'|'PUT'|'DELETE'|'PATCH';
+export type HttpOptions = {
+  path: string;
+  method?: HttpMethod;
+  data?: any;              // body
+  params?: Record<string, any>;
+  headers?: Record<string, string>;
+  auth?: boolean;          // si vrai, ajoute "Bearer <token>"
+};
+
+let _getToken: () => string | undefined = () => undefined;
+export function bindTokenGetter(getter: () => string | undefined) { _getToken = getter; }
+
+const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:4000';
+
+export const api = axios.create({
+  baseURL: BASE_URL,
+  headers: { 'Content-Type': 'application/json' }
+});
+
+// Optionnel: intercepteur pour uniformiser les erreurs
+api.interceptors.response.use(
+  r => r,
+  (err: AxiosError<any>) => {
+    const status = err.response?.status;
+    const payload = err.response?.data as any;
+    const msg =
+      payload?.error || payload?.message || err.message || 'Request failed';
+    return Promise.reject(new Error(`HTTP ${status ?? 'ERR'} – ${msg}`));
+  }
+);
+
+/**
+ * Appel générique (équivalent à ton http<T> précédent)
+ */
+export async function http<T = unknown>(opts: HttpOptions): Promise<T> {
+  const {
+    path,
+    method = 'GET',
+    data,
+    params,
+    headers = {},
+    auth = false
+  } = opts;
+
+  const cfg: AxiosRequestConfig = {
+    url: path,
+    method: method as Method,
+    data,
+    params,
+    headers: { ...headers }
+  };
+
+  if (auth) {
+    const t = _getToken?.();
+    if (t) (cfg.headers as Record<string, string>)['Authorization'] = `Bearer ${t}`;
+  }
+
+  const res = await api.request<T>(cfg);
+  return res.data;
+}
+
+// Petits helpers pratiques
+export const get  = <T=unknown>(path: string, params?: any, o?: Partial<HttpOptions>) =>
+  http<T>({ path, method: 'GET', params, ...o });
+
+export const post = <T=unknown>(path: string, body?: any, o?: Partial<HttpOptions>) =>
+  http<T>({ path, method: 'POST', data: body, ...o });
+
+export const put  = <T=unknown>(path: string, body?: any, o?: Partial<HttpOptions>) =>
+  http<T>({ path, method: 'PUT', data: body, ...o });
+
+export const del  = <T=unknown>(path: string, o?: Partial<HttpOptions>) =>
+  http<T>({ path, method: 'DELETE', ...o });
+
+
+
+===== ./src/services/test.services.ts =====
+import { http } from './http'
+
+// 2.1 Ping public: JSONPlaceholder
+export async function pingTodo() {
+  return http<{ id: number; title: string }>({
+    path: 'https://jsonplaceholder.typicode.com/todos/1',
+    method: 'GET'
+  })
+}
+
+// 2.2 Vérif header Authorization via echo public
+// On envoie Authorization et on vérifie qu'il est renvoyé dans la réponse
+export async function echoAuthHeader() {
+  return http<{ id: number; title: string }>({
+    path: 'https://jsonplaceholder.typicode.com/todos/1',
+    method: 'GET'
+  })
+}
+
+
+
+
+
+===== ./src/stores/auth.store.ts =====
+// src/stores/auth.store.ts
+import { defineStore } from 'pinia'
+import type { User } from '@/types/user'
+import { fakeLogin, fakeMe } from '@/services/fake-auth'
+
+export const useAuthStore = defineStore('auth', {
+  state: () => ({ token: '', user: null as User | null }),
+  getters: { isAuthenticated: (s) => !!s.token },
+  actions: {
+    async login(email: string, password: string) {
+      const { token, user } = await fakeLogin({ email, password })
+      this.token = token
+      this.user = user
+    },
+    async fetchMe() {
+      if (!this.token) return
+      this.user = await fakeMe(this.token)
+    },
+    logout() { this.token = ''; this.user = null }
+  },
+  persist: true
+})
+
+
+
+===== ./src/stores/calendars.store.ts =====
+// src/stores/useCalendars.ts
+import { defineStore } from 'pinia'
+import type { WorkCalendar, ID } from '@/types'
+
+type CalendarsState = {
+  items: WorkCalendar[]
+}
+
+export const useCalendars = defineStore('calendars', {
+  state: (): CalendarsState => ({
+    items: []
+  }),
+  getters: {
+    byId: (s) => (id: ID) => s.items.find(c => c.id === id),
+    all: (s) => s.items
+  },
+  actions: {
+    setAll(calendars: WorkCalendar[]) { this.items = [...calendars] },
+    add(calendar: WorkCalendar) {
+      if (this.items.some(c => c.id === calendar.id)) return
+      this.items.push(calendar)
+    },
+    upsert(calendar: WorkCalendar) {
+      const i = this.items.findIndex(c => c.id === calendar.id)
+      if (i >= 0) this.items[i] = calendar
+      else this.items.push(calendar)
+    },
+    remove(id: ID) { this.items = this.items.filter(c => c.id !== id) }
+  }
+})
+
+
+
+===== ./src/stores/export.store.ts =====
+import { defineStore } from 'pinia'
+import type { Scale } from '@/types/gantt'
+
+type State = {
+  filenameBase: string
+  includeGrid: boolean
+  includeLinks: boolean
+  theme: 'light' | 'dark'
+  scale: Scale
+  dpi: number
+  marginPx: number
+}
+
+export const useExportStore = defineStore('export', {
+  state: (): State => ({
+    filenameBase: 'gantt',
+    includeGrid: true,
+    includeLinks: true,
+    theme: 'light',
+    scale: 'week',
+    dpi: 192,
+    marginPx: 24
+  }),
+  actions: {
+    set<K extends keyof State>(k: K, v: State[K]) { this[k] = v }
+  },
+  persist: true
+})
+
+
+
+===== ./src/stores/index.ts =====
+// src/stores/index.ts
+export * from './auth.store'
+export * from './calendars.store'
+export * from './export.store'
+export * from './links.store'
+export * from './notifications.store'
+export * from './resources.store'
+export * from './selection.store'
+export * from './snapshot.store'
+export * from './sync.store'
+export * from './tasks.store'
+export * from './ui.store'
+
+
+
+===== ./src/stores/links.store.ts =====
+// src/stores/useLinks.ts
+import { defineStore } from 'pinia'
+import type { Link, ID } from '@/types'
+
+type LinksState = {
+  items: Link[]
+}
+
+export const useLinks = defineStore('links', {
+  state: (): LinksState => ({
+    items: []
+  }),
+  getters: {
+    byProject: (s) => (projectId: ID) => s.items.filter(l => l.projectId === projectId),
+    predecessorsOf: (s) => (taskId: ID) => s.items.filter(l => l.targetId === taskId),
+    successorsOf: (s) => (taskId: ID) => s.items.filter(l => l.sourceId === taskId)
+  },
+  actions: {
+    setAll(links: Link[]) { this.items = [...links] },
+    add(link: Link) {
+      if (this.items.some(l => l.id === link.id)) return
+      this.items.push(link)
+    },
+    upsert(link: Link) {
+      const i = this.items.findIndex(l => l.id === link.id)
+      if (i >= 0) this.items[i] = link
+      else this.items.push(link)
+    },
+    remove(id: ID) { this.items = this.items.filter(l => l.id !== id) },
+    removeByProject(projectId: ID) { this.items = this.items.filter(l => l.projectId !== projectId) },
+    removeAroundTask(taskId: ID) {
+      this.items = this.items.filter(l => l.sourceId !== taskId && l.targetId !== taskId)
+    }
+  }
+})
+
+
+
+===== ./src/stores/notifications.store.ts =====
+import { defineStore } from 'pinia'
+
+import { Toast } from '@/types/notifications'
+
+export const useNotificationsStore = defineStore('notifications', {
+  state: () => ({ toasts: [] as Toast[] }),
+  actions: {
+    push(t: Toast) { this.toasts.push(t) },
+    remove(id: string) { this.toasts = this.toasts.filter(x => x.id !== id) },
+    clear() { this.toasts = [] }
+  }
+})
+
+
+
+===== ./src/stores/projects.store.ts =====
+// src/stores/projects.store.ts
+import { defineStore } from 'pinia'
+import type { ID, Project } from '@/types/gantt'
+
+type State = {
+  items: Project[]
+  currentId?: ID
+}
+
+export const useProjects = defineStore('projects', {
+  state: (): State => ({ items: [], currentId: undefined }),
+  getters: {
+    all: (s) => s.items.filter(p => !p.archived),
+    byId: (s) => (id: ID) => s.items.find(p => p.id === id),
+    current: (s): Project | undefined =>
+      s.currentId ? s.items.find(p => p.id === s.currentId) : undefined
+  },
+  actions: {
+    setAll(list: Project[]) { this.items = [...list] },
+    add(p: Project) { if (!this.items.some(x => x.id === p.id)) this.items.push(p) },
+    upsert(p: Project) {
+      const i = this.items.findIndex(x => x.id === p.id)
+      if (i >= 0) this.items[i] = p; else this.items.push(p)
+    },
+    remove(id: ID) { this.items = this.items.filter(p => p.id !== id) },
+    setCurrent(id?: ID) { this.currentId = id },
+
+    create(name: string): Project {
+      const id = crypto.randomUUID()
+      const p: Project = { id, name, createdAt: new Date().toISOString() }
+      this.items.push(p)
+      this.currentId = id
+      return p
+    },
+    archive(id: ID) {
+      const p = this.byId(id)
+      if (p) this.upsert({ ...p, archived: true })
+    },
+    updateHorizon(id: ID, start: string, end: string) {
+    const p = this.byId(id)
+    if (!p) return
+    this.upsert({ ...p, start, end })
+    }
+
+  },
+  persist: true
+})
+
+
+
+===== ./src/stores/resources.store.ts =====
+// src/stores/useResources.ts
+import { defineStore } from 'pinia'
+import type { Resource, ID } from '@/types'
+
+type ResourcesState = {
+  items: Resource[]
+}
+
+export const useResources = defineStore('resources', {
+  state: (): ResourcesState => ({
+    items: []
+  }),
+  getters: {
+    byId: (s) => (id: ID) => s.items.find(r => r.id === id),
+    all: (s) => s.items
+  },
+  actions: {
+    setAll(resources: Resource[]) { this.items = [...resources] },
+    add(resource: Resource) {
+      if (this.items.some(r => r.id === resource.id)) return
+      this.items.push(resource)
+    },
+    upsert(resource: Resource) {
+      const i = this.items.findIndex(r => r.id === resource.id)
+      if (i >= 0) this.items[i] = resource
+      else this.items.push(resource)
+    },
+    remove(id: ID) { this.items = this.items.filter(r => r.id !== id) }
+  }
+})
+
+
+
+===== ./src/stores/selection.store.ts =====
+import { defineStore } from 'pinia'
+import type { ID } from '@/types/gantt'
+
+type State = { taskIds: ID[]; anchorTaskId?: ID }
+
+export const useSelectionStore = defineStore('selection', {
+  state: (): State => ({ taskIds: [] }),
+  getters: {
+    isSelected: (s) => (id: ID) => s.taskIds.includes(id)
+  },
+  actions: {
+    selectOne(id: ID) { this.taskIds = [id] },
+    toggle(id: ID) {
+      this.taskIds = this.taskIds.includes(id)
+        ? this.taskIds.filter(x => x !== id)
+        : [...this.taskIds, id]
+    },
+    selectMany(ids: ID[]) { this.taskIds = Array.from(new Set(ids)) },
+    clear() { this.taskIds = [] }
+  }
+})
+
+
+
+===== ./src/stores/snapshot.store.ts =====
+import { defineStore } from 'pinia'
+
+type Snapshot<T = any> = { id: string; at: string; diff: T }
+
+type State = {
+  undoStack: Snapshot[]
+  redoStack: Snapshot[]
+  max: number
+}
+
+export const useSnapshotsStore = defineStore('snapshots', {
+  state: (): State => ({ undoStack: [], redoStack: [], max: 50 }),
+  actions: {
+    push(s: Snapshot) {
+      this.undoStack.push(s)
+      if (this.undoStack.length > this.max) this.undoStack.shift()
+      this.redoStack = []
+    },
+    undo(): Snapshot | undefined {
+      const s = this.undoStack.pop()
+      if (s) this.redoStack.push(s)
+      return s
+    },
+    redo(): Snapshot | undefined {
+      const s = this.redoStack.pop()
+      if (s) this.undoStack.push(s)
+      return s
+    },
+    clear() { this.undoStack = []; this.redoStack = [] }
+  }
+})
+
+
+
+===== ./src/stores/sync.store.ts =====
+import { defineStore } from 'pinia'
+
+type PendingOp = { id: string; type: string; payload: any }
+
+type State = {
+  online: boolean
+  queue: PendingOp[]
+  syncing: boolean
+  lastSyncAt?: string
+  error?: string
+}
+
+export const useSyncStore = defineStore('sync', {
+  state: (): State => ({ online: true, queue: [], syncing: false }),
+  actions: {
+    enqueue(op: PendingOp) { this.queue.push(op) },
+    setOnline(v: boolean) { this.online = v },
+    beginSync() { this.syncing = true; this.error = undefined },
+    endSync(ok = true, msg?: string) {
+      this.syncing = false
+      if (ok) this.lastSyncAt = new Date().toISOString()
+      else this.error = msg || 'sync failed'
+    },
+    flushQueue() { this.queue = [] }
+  },
+  persist: true
+})
+
+
+
+===== ./src/stores/tasks.store.ts =====
+// src/stores/useTasks.ts
+import { defineStore } from 'pinia'
+import type { Task, ID } from '@/types'
+
+type TasksState = {
+  items: Task[]
+}
+
+export const useTasks = defineStore('tasks', {
+  state: (): TasksState => ({
+    items: []
+  }),
+  getters: {
+    byId: (s) => (id: ID) => s.items.find(t => t.id === id),
+    byProject: (s) => (projectId: ID) => s.items.filter(t => t.projectId === projectId),
+    childrenOf: (s) => (parentId: ID) => s.items.filter(t => t.parentId === parentId)
+  },
+  actions: {
+    setAll(tasks: Task[]) { this.items = [...tasks] },
+    add(task: Task) {
+      if (this.items.some(t => t.id === task.id)) return
+      this.items.push(task)
+    },
+    upsert(task: Task) {
+      const i = this.items.findIndex(t => t.id === task.id)
+      if (i >= 0) this.items[i] = task
+      else this.items.push(task)
+    },
+    patch(id: ID, patch: Partial<Task>) {
+      const i = this.items.findIndex(t => t.id === id)
+      if (i >= 0) this.items[i] = { ...this.items[i], ...patch }
+    },
+    remove(id: ID) { this.items = this.items.filter(t => t.id !== id) },
+    removeByProject(projectId: ID) { this.items = this.items.filter(t => t.projectId !== projectId) }
+  }
+})
+
+
+
+===== ./src/stores/ui.store.ts =====
+// src/stores/useUi.ts
+import { defineStore } from 'pinia'
+import type { Scale, ID } from '@/types'
+
+import {UiState} from '@/types/ui'
+
+export const useUi = defineStore('ui', {
+  state: (): UiState => ({
+    scale: 'week',
+    selectedTaskId: null
+  }),
+  actions: {
+    setScale(scale: Scale) { this.scale = scale },
+    selectTask(id: ID | null) { this.selectedTaskId = id }
+  }
+})
+
+
+
+===== ./src/style.css =====
+@import "tailwindcss";
+@plugin "daisyui";
+
+
+===== ./src/types/gantt.ts =====
+export type ID = string
+export type Scale = 'day' | 'week' | 'month'
+
+export type Project = {
+  id: ID
+  name: string
+  createdAt: string
+  start?: string    // ISO – début de l’horizon
+  end?: string      // ISO – fin de l’horizon
+  archived?: boolean
+}
+
+export type Task = {
+  id: ID
+  projectId: ID
+  title: string
+  start: string    // ISO
+  end: string      // ISO
+  progress: number // 0..100
+  parentId?: ID
+  resources?: ID[]
+  tags?: string[]
+}
+
+export type Link = {
+  id: ID
+  projectId: ID
+  sourceId: ID
+  targetId: ID
+  type: 'FS' | 'SS' | 'FF' | 'SF'
+  lagDays?: number
+}
+
+export type Resource = {
+  id: ID
+  name: string
+  capacityPerDay: number
+  calendarId?: ID
+}
+
+export type WorkCalendar = {
+  id: ID
+  name: string
+  workingDays: number[] // 1..7, 1 = lundi
+  exceptions: string[]  // ISO non ouvrées
+  holidays: string[]    // ISO non ouvrées
+}
+
+
+
+===== ./src/types/index.ts =====
+export * from './gantt'
+export * from './user'
+export * from './notification'
+export * from './ui'
+
+
+===== ./src/types/notification.ts =====
+export type Toast = { 
+    id: string; 
+    type: 'info'|'success'|'warning'|'error'; 
+    message: string; ttlMs?: number 
+}
+
+
+
+===== ./src/types/ui.ts =====
+import type { Scale, ID } from '@/types/gantt'
+
+export type UiState = {
+  scale: Scale
+  selectedTaskId: ID | null
+}
+
+export type Theme = 'light' | 'dark' | 'system'
+
+export type ModalState = {
+  id: string
+  isOpen: boolean
+  payload?: unknown
+}
+
+
+
+===== ./src/types/user.ts =====
+// src/types/user.ts
+export type UserRole = 'viewer' | 'editor' | 'admin'
+
+export type User = {
+  id: string
+  email: string
+  name?: string
+  role?: UserRole
+}
+export type LoginPayload = { email: string; password: string };
+export type LoginResponse = { token: string; user: User };
+
+
+
+===== ./tsconfig.json =====
+// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "jsx": "preserve",
+    "skipLibCheck": true,
+    "types": []
+  },
+  "include": ["src", "vite.config.*"]
+}
+
+
+
+===== ./vite.config.js =====
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
+import { fileURLToPath, URL } from 'node:url'
+
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [vue(), tailwindcss()],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  }
+})
+
+
+

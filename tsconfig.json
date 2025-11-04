@@ -1,0 +1,17 @@
+// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "jsx": "preserve",
+    "skipLibCheck": true,
+    "types": []
+  },
+  "include": ["src", "vite.config.*"]
+}

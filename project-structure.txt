@@ -1,0 +1,77 @@
+📦 Structure du projet à partir de .
+----------------------------------------
+📄 collect_gantt_files.sh
+📁 dist
+  📁 assets
+    📄 index-CLIsVd5J.js
+    📄 index-DvCrByeF.css
+  📄 index.html
+📄 go-on.sh
+📄 index.html
+📄 package.json
+📄 package-lock.json
+📄 project-export.txt
+📄 project-structure.txt
+📄 README.md
+📄 scan-project.sh
+📁 src
+  📄 App.vue
+  📁 components
+    📄 Header.vue
+  📁 features
+    📁 gantt
+      📁 canvas
+        📄 GanttCanvas.vue
+        📁 layers
+          📄 BarsLayer.vue
+          📄 GridLayer.vue
+          📄 LinksLayer.vue
+          📄 TodayMarker.vue
+      📁 editor
+        📄 EditorShell.vue
+        📄 Sidebar.vue
+        📄 TimeHorizonPicker.vue
+        📄 Toolbar.vue
+      📁 projects
+        📄 ProjectCreateForm.vue
+        📄 ProjectList.vue
+      📁 shared
+        📄 EmptyState.vue
+        📄 PlusCircleButton.vue
+        📄 ProjectCard.vue
+      📁 stores
+  📄 main.js
+  📁 router
+    📄 index.ts
+  📁 services
+    📄 fake-auth.ts
+    📄 http.ts
+    📄 test.services.ts
+  📁 stores
+    📄 auth.store.ts
+    📄 calendars.store.ts
+    📄 export.store.ts
+    📄 index.ts
+    📄 links.store.ts
+    📄 notifications.store.ts
+    📄 projects.store.ts
+    📄 resources.store.ts
+    📄 selection.store.ts
+    📄 snapshot.store.ts
+    📄 sync.store.ts
+    📄 tasks.store.ts
+    📄 ui.store.ts
+  📄 style.css
+  📁 types
+    📄 gantt.ts
+    📄 index.ts
+    📄 notification.ts
+    📄 ui.ts
+    📄 user.ts
+  📁 views
+    📄 AppHomeView.vue
+    📄 GanttEditorView.vue
+    📄 GanttListView.vue
+    📄 LoginView.vue
+📄 tsconfig.json
+📄 vite.config.js
