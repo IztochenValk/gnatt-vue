@@ -21,14 +21,23 @@
   📁 features
     📁 gantt
       📁 canvas
+        📄 GanttCanvaContainer.vue
         📄 GanttCanvas.vue
         📁 layers
           📄 BarsLayer.vue
           📄 GridLayer.vue
+          📄 HeaderLayer.vue
           📄 LinksLayer.vue
+          📄 RowsLayer.vue
           📄 TodayMarker.vue
       📁 editor
+        📄 AddTaskButton.vue
+        📄 AddTaskMenu.vue
         📄 EditorShell.vue
+        📄 ExportControls.vue
+        📄 HorizonSetter.vue
+        📄 HorizonSetterCompact.vue
+        📄 ScaleSwitcher.vue
         📄 Sidebar.vue
         📄 TimeHorizonPicker.vue
         📄 Toolbar.vue
@@ -40,6 +49,11 @@
         📄 PlusCircleButton.vue
         📄 ProjectItem.vue
       📁 stores
+      📁 types
+        📄 index.ts
+      📁 utils
+        📄 adapters.ts
+        📄 time.ts
   📄 main.js
   📁 router
     📄 index.ts
@@ -73,5 +87,6 @@
     📄 GanttEditorView.vue
     📄 GanttListView.vue
     📄 LoginView.vue
+    📄 ProjectsView.vue
 📄 tsconfig.json
 📄 vite.config.js

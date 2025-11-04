@@ -1,11 +1,14 @@
-<template>
-  <div></div>
-</template>
-
 <script setup lang="ts">
-// TODO
+const props = defineProps<{ ticks: Tick[]; colWidth: number }>()
+const todayIdx = (() => {
+  const now = new Date(); now.setHours(0,0,0,0)
+  return props.ticks.findIndex(t => t.date.getTime() === now.getTime())
+})()
 </script>
 
-<style scoped>
-/* TODO */
-</style>
+<template>
+  <div v-if="todayIdx >= 0" class="absolute inset-y-0">
+    <div class="w-px bg-error absolute"
+         :style="{ left: `${todayIdx * colWidth}px` }"/>
+  </div>
+</template>
